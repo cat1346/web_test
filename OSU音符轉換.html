@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft 指令轉換器</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        p {
+            background-color: #f4f4f4;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Minecraft 指令轉換器</h1>
+    <p>輸入多行格式化文本，每行一個 hitobject：</p>
+    <textarea id="inputData" placeholder="輸入多行數據，例如：&#10;438,284,1057,R"></textarea>
+    <button onclick="processInput()">轉換</button>
+    <h2>結果：</h2>
+    <div id="output"></div>
+
+    <script>
+        function parseHitObjects(inputLines) {
+            // 定義type對應字母和顏色的映射
+            const typeMap = {
+                2: 'L',  // L
+                6: 'R',  // R
+                14: 'D', // D
+                0: 'U',  // U
+                10: 'H', // H
+                8: 'M',  // M
+                4: 'E'   // E
+            };
+
+            const colorMap = {
+                L: 'lime',
+                R: 'yellow',
+                D: 'light_blue',
+                U: 'white',
+                H: 'white',
+                M: 'white',
+                E: 'white'
+            };
+
+            // 特殊規則：如果 x 或 y 是 0, 100, 200, 300, 400, 500，+1
+            const specialValues = [0, 100, 200, 300, 400, 500];
+
+            return inputLines.map(line => {
+                const parts = line.split(',');
+
+                // 提取值
+                let x = parseFloat(parts[0]);
+                let y = parseFloat(parts[1]);
+                const time = parseInt(parts[2], 10); // time 不再放大10倍
+                const type = parseInt(parts[4], 10); // 轉換為數字
+
+                // 確保從 typeMap 中獲得對應的字母
+                const typeLetter = typeMap[type]; // 根據數字獲取對應字母
+                const color = colorMap[typeLetter] || 'white';  // 默認顏色為 white
+
+                // 檢查 x 和 y 是否需要 +1，並處理為負數並縮小兩位數
+                if (specialValues.includes(x)) x += 1;
+                if (specialValues.includes(y)) y += 1;
+
+                // x 和 y 轉為負數並縮小 100 倍
+                x = -x / 100;
+                y = -y / 100;
+
+                // 返回格式化的 Minecraft 指令
+                return `execute as @p[scores={music_time=${time}}] run summon minecraft:armor_stand ${x.toFixed(2)} ${y.toFixed(2)} 24 {Marker:1b,Invisible:1b,NoBasePlate:1b,DisabledSlots:16191,NoGravity:1b,Silent:1b,ArmorItems:[{},{},{},{id:${color}_concrete,count:1}],ArmorDropChances:[0f,0f,0f,0f],Tags:["note","${typeLetter}"]}`;
+            });
+        }
+
+        function processInput() {
+            const inputData = document.getElementById('inputData').value.trim();
+            const lines = inputData.split('\n');
+            const results = parseHitObjects(lines);
+
+            // 清空舊的輸出內容
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '';
+
+            // 將每條結果包裝為 <p> 標籤並顯示
+            results.forEach(result => {
+                const pElement = document.createElement('p');
+                pElement.textContent = result;
+                outputDiv.appendChild(pElement);
+            });
+        }
+    </script>
+</body>
+</html>
