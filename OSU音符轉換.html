@@ -3,106 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft 指令轉換器</title>
+    <title>Interactive Elements</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            padding: 20px;
+            line-height: 1.6;
         }
-        textarea {
-            width: 100%;
-            height: 150px;
-            margin-bottom: 10px;
+        .interactive-element {
+            margin: 15px 0;
+            display: block;
         }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-        }
-        p {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-            overflow-x: auto;
+        label {
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Minecraft 指令轉換器</h1>
-    <p>輸入多行格式化文本，每行一個 hitobject：</p>
-    <textarea id="inputData" placeholder="輸入多行數據，例如：&#10;438,284,1057,R"></textarea>
-    <button onclick="processInput()">轉換</button>
-    <h2>結果：</h2>
-    <div id="output"></div>
+    <h1>Interactive HTML Elements</h1>
+    
+    <!-- Text input -->
+    <label for="text-input">Text Input:</label>
+    <input type="text" id="text-input" class="interactive-element">
 
-    <script>
-        function parseHitObjects(inputLines) {
-            // 定義type對應字母和顏色的映射
-            const typeMap = {
-                2: 'L',  // L
-                6: 'R',  // R
-                14: 'D', // D
-                0: 'U',  // U
-                10: 'H', // H
-                8: 'M',  // M
-                4: 'E'   // E
-            };
+    <!-- Password input -->
+    <label for="password-input">Password Input:</label>
+    <input type="password" id="password-input" class="interactive-element">
 
-            const colorMap = {
-                L: 'lime',
-                R: 'yellow',
-                D: 'light_blue',
-                U: 'white',
-                H: 'white',
-                M: 'white',
-                E: 'white'
-            };
+    <!-- Email input -->
+    <label for="email-input">Email Input:</label>
+    <input type="email" id="email-input" class="interactive-element">
 
-            // 特殊規則：如果 x 或 y 是 0, 100, 200, 300, 400, 500，+1
-            const specialValues = [0, 100, 200, 300, 400, 500];
+    <!-- Number input -->
+    <label for="number-input">Number Input:</label>
+    <input type="number" id="number-input" class="interactive-element">
 
-            return inputLines.map(line => {
-                const parts = line.split(',');
+    <!-- Date input -->
+    <label for="date-input">Date Input:</label>
+    <input type="date" id="date-input" class="interactive-element">
 
-                // 提取值
-                let x = parseFloat(parts[0]);
-                let y = parseFloat(parts[1]);
-                const time = parseInt(parts[2], 10); // time 不再放大10倍
-                const type = parseInt(parts[4], 10); // 轉換為數字
+    <!-- Range slider -->
+    <label for="range-slider">Range Slider:</label>
+    <input type="range" id="range-slider" min="0" max="100" step="1" class="interactive-element">
 
-                // 確保從 typeMap 中獲得對應的字母
-                const typeLetter = typeMap[type]; // 根據數字獲取對應字母
-                const color = colorMap[typeLetter] || 'white';  // 默認顏色為 white
+    <!-- New Slider -->
+    <label for="slider">Custom Slider:</label>
+    <input type="range" id="slider" min="0" max="100" step="5" class="interactive-element">
 
-                // 檢查 x 和 y 是否需要 +1，並處理為負數並縮小兩位數
-                if (specialValues.includes(x)) x += 1;
-                if (specialValues.includes(y)) y += 1;
+    <!-- Checkbox -->
+    <label for="checkbox">Checkbox:</label>
+    <input type="checkbox" id="checkbox" class="interactive-element">
 
-                // x 和 y 轉為負數並縮小 100 倍
-                x = -x / 100;
-                y = -y / 100;
+    <!-- Radio buttons -->
+    <p>Radio Buttons:</p>
+    <label><input type="radio" name="radio-group" value="1" class="interactive-element"> Option 1</label>
+    <label><input type="radio" name="radio-group" value="2" class="interactive-element"> Option 2</label>
+    <label><input type="radio" name="radio-group" value="3" class="interactive-element"> Option 3</label>
 
-                // 返回格式化的 Minecraft 指令
-                return `execute as @p[scores={music_time=${time}}] run summon minecraft:armor_stand ${x.toFixed(2)} ${y.toFixed(2)} 24 {Marker:1b,Invisible:1b,NoBasePlate:1b,DisabledSlots:16191,NoGravity:1b,Silent:1b,ArmorItems:[{},{},{},{id:${color}_concrete,count:1}],ArmorDropChances:[0f,0f,0f,0f],Tags:["note","${typeLetter}"]}`;
-            });
-        }
+    <!-- Dropdown menu -->
+    <label for="dropdown">Dropdown Menu:</label>
+    <select id="dropdown" class="interactive-element">
+        <option value="1">Option 1</option>
+        <option value="2">Option 2</option>
+        <option value="3">Option 3</option>
+    </select>
 
-        function processInput() {
-            const inputData = document.getElementById('inputData').value.trim();
-            const lines = inputData.split('\n');
-            const results = parseHitObjects(lines);
+    <!-- Textarea -->
+    <label for="textarea">Textarea:</label>
+    <textarea id="textarea" rows="4" class="interactive-element"></textarea>
 
-            // 清空舊的輸出內容
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = '';
-
-            // 將每條結果包裝為 <p> 標籤並顯示
-            results.forEach(result => {
-                const pElement = document.createElement('p');
-                pElement.textContent = result;
-                outputDiv.appendChild(pElement);
-            });
-        }
-    </script>
+    <!-- Button -->
+    <button class="interactive-element">Submit</button>
 </body>
 </html>
